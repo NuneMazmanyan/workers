@@ -1,12 +1,11 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 import { Worker } from 'worker_threads';
+import { jsonDirectory } from './assets/consts'
 
-let jsonDirectory = "C:/Users/Nune/OneDrive/Рабочий стол/EPAM Node/worker's homework/task3/converted files"
-
-async function getCSVFiles(directoryPath) {
-    let csvFiles = [];
+async function getCSVFiles(directoryPath: string): Promise<void | string[]> {
+    let csvFiles: string[];
     if (!fs.existsSync(directoryPath)) {
         console.log('No directory with matching name')
         return;
@@ -25,21 +24,21 @@ async function getCSVFiles(directoryPath) {
     }).then()
 }
 
-function getWorkersCount(csvFilesCount) {
-    let cpus = os.cpus().length;
+function getWorkersCount(csvFilesCount: number): number {
+    let cpus: number = os.cpus().length;
     return Math.min(cpus, csvFilesCount) > 10 ? 10 : Math.min(cpus, csvFilesCount);
 }
 
-export async function convertCsvDirFilesToJSONDirFiles(directoryPath) {
-    const workers = [];
-    let csvFiles = await getCSVFiles(directoryPath);
+export async function convertCsvDirFilesToJSONDirFiles(directoryPath: string): Promise<void> {
+    const workers: Worker[] = [];
+    let csvFiles: string[] = await getCSVFiles(directoryPath) as string[];
 
-    let workersCount = getWorkersCount(csvFiles.length);
-    const filePathsPerWorker = Math.floor(csvFiles.length / workersCount);
+    let workersCount = getWorkersCount(csvFiles!.length);
+    const filePathsPerWorker = Math.floor(csvFiles!.length / workersCount);
 
-    for (let i = 0; i < csvFiles.length; i += filePathsPerWorker) {
+    for (let i = 0; i < csvFiles!.length; i += filePathsPerWorker) {
         const worker = new Worker('./worker.js', {
-            workerData: {csvFilePaths: csvFiles.slice(i, i + filePathsPerWorker)},
+            workerData: {csvFilePaths:(csvFiles as string[]).slice(i, i + filePathsPerWorker)},
         });
         worker.on('error', (error) => {
             console.log(`Worker ${worker.threadId} error:`, error);
@@ -50,7 +49,7 @@ export async function convertCsvDirFilesToJSONDirFiles(directoryPath) {
     await Promise.all(workers.map((worker) => new Promise((resolve) => worker.on('exit', resolve)))).then(() => {});
 }
 
-export function getJSONFiles() {
+export function getJSONFiles(): Promise<string[]> {
     return new Promise((resolve, reject) => {
         fs.readdir(jsonDirectory, (error, files) => {
             if (error) {

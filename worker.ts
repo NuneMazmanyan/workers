@@ -4,9 +4,9 @@ import csv from 'csv-parser';
 import path from 'path';
 const {csvFilePaths} = workerData;
 
-function readCSV(csvFilePath) {
+function readCSV(csvFilePath): Promise<string[]>{
     return new Promise((resolve) => {
-        const result = [];
+        const result: string[] = [];
         fs.createReadStream(csvFilePath)
             .pipe(csv())
             .on('data', (data) => {
@@ -18,10 +18,10 @@ function readCSV(csvFilePath) {
     })
 }
 
-async function processCSVFile(csvFilePath) {
+async function processCSVFile(csvFilePath): Promise<string | null> {
     try {
-      const jsonData = await readCSV(csvFilePath);
-      const jsonFilePath = path.join(
+      const jsonData: string[] = await readCSV(csvFilePath);
+      const jsonFilePath: string = path.join(
         path.dirname(csvFilePath.replace('csv files', 'converted files')),
         path.basename(csvFilePath).replace('csv', 'json')
       );
@@ -35,7 +35,7 @@ async function processCSVFile(csvFilePath) {
 
 csvFilePaths.forEach((csvFilePath) => {
     processCSVFile(csvFilePath).then((jsonFilePath) => {
-        parentPort.postMessage(jsonFilePath);
+        parentPort!.postMessage(jsonFilePath);
     });
 });
 
@@ -44,5 +44,5 @@ const promises = csvFilePaths.map((csvFilePath) => {
 });
 
 Promise.all(promises).then((jsonFilePaths) => {
-  parentPort.postMessage(jsonFilePaths);
+  parentPort!.postMessage(jsonFilePaths);
 });

@@ -1,9 +1,8 @@
-import { convertCsvDirFilesToJSONDirFiles, getJSONFiles } from './app.js'
-import http from 'http';
-import path from 'path';
-import fs from 'fs';
-
-let jsonDirectory = "C:/Users/Nune/OneDrive/Рабочий стол/EPAM Node/worker's homework/task3/converted files"
+import { convertCsvDirFilesToJSONDirFiles, getJSONFiles } from './app'
+import * as fs from 'fs';
+import * as path from 'path';
+import * as http from 'http';
+import { jsonDirectory } from './assets/consts'
 
 const server = http.createServer(async (request, response) => {
     const {method, url} = request;
@@ -20,7 +19,6 @@ const server = http.createServer(async (request, response) => {
 
         request.on('data', (chunk) => {
             bodyPath = (path.join(...JSON.parse(chunk).path.split('//')));
-            console.log(bodyPath)
         });
 
         request.on('end', ()=>{
@@ -52,8 +50,8 @@ const server = http.createServer(async (request, response) => {
                 })
         }
 
-        if (url.startsWith('/files/')) {
-            const fileName = url.split('/').pop();
+        if (url!.startsWith('/files/')) {
+            const fileName = url!.split('/').pop();
             const filePath = jsonDirectory + '/' + fileName;
             fs.readFile(filePath, (err, data) => {
                 if (err) {
@@ -68,8 +66,8 @@ const server = http.createServer(async (request, response) => {
         }
     }
 
-    if (method === 'DELETE' && url.startsWith('/files/')) {
-        const fileName = url.split('/').pop();
+    if (method === 'DELETE' && url!.startsWith('/files/')) {
+        const fileName = url!.split('/').pop();
         const filePath = jsonDirectory + '/' + fileName;
 
         fs.unlink(filePath, (err) => {
