@@ -39,9 +39,9 @@ csvFilePaths.forEach(async(csvFilePath: string) => {
     });
 });
 
-const promises = [...csvFilePaths.map((csvFilePath: string) => {
+const promises = csvFilePaths.map((csvFilePath: string) => {
     processCSVFile(csvFilePath)
-})];
+});
 
 Promise.all(promises).then((jsonFilePaths) => {
   parentPort!.postMessage(jsonFilePaths);

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
 import { workerData } from 'worker_threads';
-const jsonDirectory = path.join(__dirname, 'converted files')
+const jsonDirectory = path.join(__dirname, 'converted-files')
 
 const server = http.createServer(async (request: http.IncomingMessage, response: http.ServerResponse) => {
     const {method, url} = request;
