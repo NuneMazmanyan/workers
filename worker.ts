@@ -4,7 +4,7 @@ import csv from 'csv-parser';
 import path from 'path';
 const {csvFilePaths} = workerData;
 
-function readCSV(csvFilePath): Promise<string[]>{
+function readCSV(csvFilePath: string): Promise<string[]>{
     return new Promise((resolve) => {
         const result: string[] = [];
         fs.createReadStream(csvFilePath)
@@ -18,7 +18,7 @@ function readCSV(csvFilePath): Promise<string[]>{
     })
 }
 
-async function processCSVFile(csvFilePath): Promise<string | null> {
+async function processCSVFile(csvFilePath: string): Promise<string | null> {
     try {
       const jsonData: string[] = await readCSV(csvFilePath);
       const jsonFilePath: string = path.join(
@@ -33,13 +33,13 @@ async function processCSVFile(csvFilePath): Promise<string | null> {
     }
   }
 
-csvFilePaths.forEach((csvFilePath) => {
+csvFilePaths.forEach((csvFilePath: string) => {
     processCSVFile(csvFilePath).then((jsonFilePath) => {
         parentPort!.postMessage(jsonFilePath);
     });
 });
 
-const promises = csvFilePaths.map((csvFilePath) => {
+const promises = csvFilePaths.map((csvFilePath: string) => {
     processCSVFile(csvFilePath)
 });
 
