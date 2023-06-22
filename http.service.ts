@@ -2,7 +2,7 @@ import { convertCsvDirFilesToJSONDirFiles, getJSONFiles } from './app'
 import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
-import { jsonDirectory } from './assets/consts'
+const jsonDirectory = path.join(__dirname, 'converted files')
 
 const server = http.createServer(async (request, response) => {
     const {method, url} = request;

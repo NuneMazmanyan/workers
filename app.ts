@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { Worker } from 'worker_threads';
-import { jsonDirectory } from './assets/consts'
+
+const jsonDirectory = path.join(__dirname, 'converted files')
 
 async function getCSVFiles(directoryPath: string): Promise<void | string[]> {
     let csvFiles: string[];
@@ -46,7 +47,7 @@ export async function convertCsvDirFilesToJSONDirFiles(directoryPath: string): P
         workers.push(worker);
     }
 
-    await Promise.all(workers.map((worker) => new Promise((resolve) => worker.on('exit', resolve)))).then(() => {});
+    Promise.all(workers.map((worker: Worker) => new Promise((resolve) => worker.on('exit', resolve)))).then();
 }
 
 export function getJSONFiles(): Promise<string[]> {
