@@ -2,12 +2,13 @@ import { convertCsvDirFilesToJSONDirFiles, getJSONFiles } from './app'
 import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
+import { workerData } from 'worker_threads';
 const jsonDirectory = path.join(__dirname, 'converted files')
 
-const server = http.createServer(async (request, response) => {
+const server = http.createServer(async (request: http.IncomingMessage, response: http.ServerResponse) => {
     const {method, url} = request;
 
-    request.on('error', (err) => {
+    request.on('error', (err: Error) => {
         console.error(err);
         response.statusCode = 500;
         response.end('An error occurred during file conversion.');
@@ -21,9 +22,9 @@ const server = http.createServer(async (request, response) => {
             bodyPath = (path.join(...JSON.parse(chunk).path.split('//')));
         });
 
-        request.on('end', ()=>{
+        request.on('end', async()=>{
             try {
-                convertCsvDirFilesToJSONDirFiles(bodyPath).then(()=>{
+                await convertCsvDirFilesToJSONDirFiles(bodyPath).then(()=>{
                     response.statusCode = 200;
                     response.end('CSV files converted and saved.');
                 })
@@ -36,7 +37,7 @@ const server = http.createServer(async (request, response) => {
         })
     
 
-        request.on('error',(err)=>{
+        request.on('error',(err: Error)=>{
             console.error(err);
             response.statusCode = 500;
             response.end('An error occurred during file conversion.');

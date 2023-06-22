@@ -33,15 +33,15 @@ async function processCSVFile(csvFilePath: string): Promise<string | null> {
     }
   }
 
-csvFilePaths.forEach((csvFilePath: string) => {
-    processCSVFile(csvFilePath).then((jsonFilePath) => {
+csvFilePaths.forEach(async(csvFilePath: string) => {
+    await processCSVFile(csvFilePath).then((jsonFilePath) => {
         parentPort!.postMessage(jsonFilePath);
     });
 });
 
-const promises = csvFilePaths.map((csvFilePath: string) => {
+const promises = [...csvFilePaths.map((csvFilePath: string) => {
     processCSVFile(csvFilePath)
-});
+})];
 
 Promise.all(promises).then((jsonFilePaths) => {
   parentPort!.postMessage(jsonFilePaths);
