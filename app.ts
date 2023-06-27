@@ -38,7 +38,7 @@ export async function convertCsvDirFilesToJSONDirFiles(directoryPath: string): P
     const filePathsPerWorker = Math.floor(csvFiles!.length / workersCount);
 
     for (let i = 0; i < csvFiles!.length; i += filePathsPerWorker) {
-        const worker = new Worker('./worker.js', {
+        const worker = new Worker('./dist/worker.js', {
             workerData: {csvFilePaths:(csvFiles as string[]).slice(i, i + filePathsPerWorker)},
         });
         worker.on('error', (error) => {
